@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+dasklyr_*.tar.gz
+dasklyr_*.tgz
+inst/doc
+.venv/
+__pycache__/
+.DS_Store
+PLAN*
+CRAN-SUBMISSION

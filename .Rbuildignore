@@ -1,0 +1,15 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.Rhistory$
+^\.RData$
+^\.gitignore$
+^PLAN\.md$
+^PLAN
+^docker-compose\.yml$
+^examples$
+^cran-comments\.md$
+^LICENSE\.md$
+^CRAN-SUBMISSION$
+^\.github$
+^dasklyr_.*\.tar\.gz$
+^dasklyr\.Rcheck$

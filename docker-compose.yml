@@ -1,0 +1,41 @@
+# Local Dask cluster for dasklyr.
+# Scheduler :8786   Dashboard :8787
+#
+#   docker compose up -d --wait
+#   DASK_SCHEDULER=tcp://127.0.0.1:8786 Rscript examples/cluster_demo.R
+
+services:
+  scheduler:
+    image: ghcr.io/dask/dask:2026.8.0
+    hostname: scheduler
+    command: ["dask-scheduler"]
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import socket; socket.create_connection(('127.0.0.1', 8786), 2)",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+  worker:
+    image: ghcr.io/dask/dask:2026.8.0
+    command:
+      [
+        "dask-worker",
+        "tcp://scheduler:8786",
+        "--nthreads",
+        "2",
+        "--memory-limit",
+        "1GB",
+      ]
+    depends_on:
+      scheduler:
+        condition: service_healthy
