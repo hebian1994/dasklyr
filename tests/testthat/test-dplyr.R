@@ -4,13 +4,7 @@ test_that("dplyr verbs: mutate constants, filter in/na, summarise, joins", {
   sc <- dask_connect(master = "local")
   on.exit(dask_disconnect(sc), add = TRUE)
 
-  students <- data.frame(
-    name = c("Ann", "Bob", "Cara", "Dan", NA_character_),
-    class = c("a", "a", "b", "b", "a"),
-    math = c(92, 78, 88, 95, 70),
-    english = c(85, 90, 76, 88, 80),
-    stringsAsFactors = FALSE
-  )
+  students <- dasklyr_students(na_name = TRUE)
   tbl <- copy_to(sc, students, overwrite = TRUE, repartition = 2L)
   classes <- copy_to(
     sc,

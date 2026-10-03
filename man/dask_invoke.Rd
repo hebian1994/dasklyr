@@ -33,5 +33,7 @@ it is wrapped as a \code{tbl_dask}.
 sc <- dask_connect()
 st <- copy_to(sc, mtcars, overwrite = TRUE)
 dask_invoke(st, "npartitions")
+dask_invoke(st, "repartition", npartitions = 2L)
+dask_invoke(sc, "scheduler_info")
 }
 }

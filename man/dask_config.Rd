@@ -11,6 +11,8 @@ dask_config(...)
 \itemize{
 \item \code{timeout}: seconds to wait when connecting to a remote scheduler.
 \item \code{processes}: local \code{Client} processes flag (default \code{FALSE}).
+\item \code{n_workers}: Coiled worker count when creating a cluster.
+\item \code{shutdown_on_close}: Coiled cluster teardown on \code{\link[=dask_disconnect]{dask_disconnect()}}.
 }}
 }
 \value{

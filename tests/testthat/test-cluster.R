@@ -4,14 +4,7 @@ test_that("docker/cluster scheduler runs dplyr verbs", {
   sc <- dask_connect(master = scheduler)
   on.exit(dask_disconnect(sc), add = TRUE)
 
-  students <- data.frame(
-    name = c("Ann", "Bob", "Cara", "Dan"),
-    class = c("a", "a", "b", "b"),
-    math = c(92, 78, 88, 95),
-    english = c(85, 90, 76, 88),
-    stringsAsFactors = FALSE
-  )
-  tbl <- copy_to(sc, students, overwrite = TRUE, repartition = 2L)
+  tbl <- copy_to(sc, dasklyr_students(), overwrite = TRUE, repartition = 2L)
 
   ping <- tbl %>%
     dplyr::filter(math >= 90) %>%

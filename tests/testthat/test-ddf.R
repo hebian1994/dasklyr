@@ -4,14 +4,7 @@ test_that("ddf_* helpers and dask_invoke match sparklyr sdf_/invoke role", {
   sc <- dask_connect(master = "local")
   on.exit(dask_disconnect(sc), add = TRUE)
 
-  students <- data.frame(
-    name = c("Ann", "Bob", "Cara", "Dan"),
-    class = c("a", "a", "b", "b"),
-    math = c(92, 78, 88, 95),
-    english = c(85, 90, 76, 88),
-    stringsAsFactors = FALSE
-  )
-  tbl <- copy_to(sc, students, overwrite = TRUE, repartition = 2L)
+  tbl <- copy_to(sc, dasklyr_students(), overwrite = TRUE, repartition = 2L)
 
   expect_equal(ddf_npartitions(tbl), 2L)
   expect_equal(ddf_ncol(tbl), 4L)

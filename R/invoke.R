@@ -29,6 +29,8 @@ dask_py_call <- function(obj, method, ...) {
 #' sc <- dask_connect()
 #' st <- copy_to(sc, mtcars, overwrite = TRUE)
 #' dask_invoke(st, "npartitions")
+#' dask_invoke(st, "repartition", npartitions = 2L)
+#' dask_invoke(sc, "scheduler_info")
 #' }
 dask_invoke <- function(x, method, ...) {
   UseMethod("dask_invoke")

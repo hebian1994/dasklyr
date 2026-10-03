@@ -4,12 +4,16 @@
 \alias{dask_connection_find}
 \title{Find an open Dask connection}
 \usage{
-dask_connection_find(master = NULL, app_name = NULL)
+dask_connection_find(master = NULL, app_name = NULL, cluster_name = NULL)
 }
 \arguments{
-\item{master}{Scheduler address, or \code{"local"}. \code{NULL} matches any.}
+\item{master}{Scheduler address, \code{"local"}, or \code{"coiled"}. \code{NULL}
+matches any.}
 
-\item{app_name}{Application name. \code{NULL} matches any.}
+\item{app_name}{Application name used for local / \verb{tcp://} reuse.
+\code{NULL} matches any.}
+
+\item{cluster_name}{Coiled cluster name. \code{NULL} matches any.}
 }
 \value{
 A list of matching \code{dask_connection} objects (possibly empty).

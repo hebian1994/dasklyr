@@ -54,6 +54,12 @@ path is a shared volume or object store.
 \examples{
 \dontrun{
 sc <- dask_connect()
-pq <- dask_read_parquet(sc, "sales", "/data/sales.parquet")
+st <- copy_to(sc, mtcars, overwrite = TRUE)
+tmp <- tempfile("dasklyr")
+dir.create(tmp)
+dask_write_parquet(st, file.path(tmp, "mtcars.parquet"), overwrite = TRUE)
+dask_read_parquet(sc, "mtcars_pq", file.path(tmp, "mtcars.parquet"))
+dask_write_csv(st, file.path(tmp, "mtcars_csv"))
+dask_read_csv(sc, "mtcars_csv", file.path(tmp, "mtcars_csv", "*"))
 }
 }

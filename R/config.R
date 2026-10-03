@@ -6,6 +6,8 @@
 #' @param ... Named options. Known keys:
 #'   * `timeout`: seconds to wait when connecting to a remote scheduler.
 #'   * `processes`: local `Client` processes flag (default `FALSE`).
+#'   * `n_workers`: Coiled worker count when creating a cluster.
+#'   * `shutdown_on_close`: Coiled cluster teardown on [dask_disconnect()].
 #' @return A named list.
 #' @export
 #' @examples

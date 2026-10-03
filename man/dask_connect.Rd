@@ -11,14 +11,19 @@ dask_connect(
   timeout = NULL,
   processes = NULL,
   scheduler = NULL,
+  cluster_name = NULL,
+  n_workers = NULL,
+  shutdown_on_close = FALSE,
   ...
 )
 }
 \arguments{
 \item{master}{\code{"local"} starts a local client. A scheduler address such as
-\code{"tcp://hostname:8786"} connects to a cluster.}
+\code{"tcp://hostname:8786"} connects to a self-managed cluster.
+\code{"coiled"} opens or attaches a \href{https://docs.coiled.io/}{Coiled} cluster.}
 
-\item{app_name}{Application name used when reusing connections.}
+\item{app_name}{Application name used when reusing local / \verb{tcp://}
+connections. Not the Coiled cluster name.}
 
 \item{config}{A list from \code{\link[=dask_config]{dask_config()}}.}
 
@@ -29,6 +34,16 @@ Default \code{FALSE} avoids Windows process-spawn issues.}
 
 \item{scheduler}{Alias for \code{master}.}
 
+\item{cluster_name}{Coiled cluster name (\code{coiled.Cluster(name=)}).
+Required when \code{master = "coiled"}.}
+
+\item{n_workers}{Worker count passed to Coiled only when creating a
+cluster (not when attaching to a ready one).}
+
+\item{shutdown_on_close}{If \code{TRUE}, \code{\link[=dask_disconnect]{dask_disconnect()}} shuts down the
+Coiled cluster. Default \code{FALSE} leaves the VMs so the same
+\code{cluster_name} can be reused.}
+
 \item{...}{Unused; present for sparklyr-like call compatibility.}
 }
 \value{
@@ -38,14 +53,22 @@ A \code{dask_connection}.
 Counterpart to sparklyr's \code{spark_connect(master = ...)}. With no
 arguments, starts a \strong{local} client. \code{DASK_SCHEDULER} is not read here;
 pass \code{master} (or \code{dask_connect(Sys.getenv("DASK_SCHEDULER"))}) for a
-cluster.
+cluster. \code{master = "coiled"} uses Python \code{coiled.Cluster} (token + TLS);
+do not pass a Coiled \verb{tcp://} or \verb{tls://} address here.
 }
 \details{
-The same \code{master} + \code{app_name} pair reuses an open connection.
+Local / \verb{tcp://} reuse the same \code{master} + \code{app_name} pair. Coiled reuses
+the same \code{cluster_name} in this R session, and attaches to a live cluster
+of that name on Coiled.
 }
 \examples{
 \dontrun{
 sc <- dask_connect(master = "local")
 sc <- dask_connect(master = Sys.getenv("DASK_SCHEDULER"))
+sc <- dask_connect(
+  master = "coiled",
+  cluster_name = "demo-keep",
+  shutdown_on_close = FALSE
+)
 }
 }

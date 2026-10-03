@@ -12,10 +12,12 @@ Computation stays in Python workers; R builds the graph and collects results.
 \details{
 Point reticulate at a Python that has Dask with \strong{environment variables},
 not hardcoded paths: \code{DASKLYR_PYTHON} or \code{RETICULATE_PYTHON}. Cluster
-address: \code{DASK_SCHEDULER} (scheduler \verb{tcp://} host and port).
+address: \code{DASK_SCHEDULER} (scheduler \verb{tcp://} host and port). Optional
+Coiled: \code{master = "coiled"} after \verb{coiled login} / \code{DASK_COILED__TOKEN}.
 }
 \seealso{
-\code{\link[=dask_connect]{dask_connect()}}, \code{\link[=copy_to]{copy_to()}}, \code{\link[=dask_read_parquet]{dask_read_parquet()}}, \code{\link[=ddf_schema]{ddf_schema()}}
+\code{\link[=dask_connect]{dask_connect()}}, \code{\link[=copy_to]{copy_to()}}, \code{\link[=dask_read_parquet]{dask_read_parquet()}}, \code{\link[=ddf_schema]{ddf_schema()}},
+\code{\link[=dask_coiled_clusters]{dask_coiled_clusters()}}
 }
 \author{
 \strong{Maintainer}: Louis Li \email{908163862@qq.com} [copyright holder]

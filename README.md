@@ -14,6 +14,7 @@ read-write / collect). R talks to the Python Dask client through
 - [Table Utilities](#table-utilities)
 - [Connection Utilities](#connection-utilities)
 - [Docker cluster](#docker-cluster)
+- [Examples](#examples)
 
 ## Installation
 
@@ -57,7 +58,23 @@ sc <- dask_connect(master = "local")
 ```
 
 The returned connection (`sc`) is a dplyr source. The same `master` +
-`app_name` pair reuses an open connection.
+`app_name` pair reuses an open local / `tcp://` connection.
+
+For [Coiled](https://docs.coiled.io/) (`pip install coiled` and
+`coiled login` in the same Python as `DASKLYR_PYTHON`):
+
+```r
+sc <- dask_connect(
+  master = "coiled",
+  cluster_name = "demo-keep",
+  shutdown_on_close = FALSE
+)
+dask_coiled_clusters()
+```
+
+`cluster_name` is the Coiled cluster identity. A stopped cluster of the
+same name starts a new id. `shutdown_on_close = FALSE` leaves the VMs
+after `dask_disconnect()`.
 
 ## Using dplyr
 
@@ -153,6 +170,7 @@ Python method (sparklyr's `invoke()`).
 ```r
 dask_web(sc)              # dashboard URL (opens a browser when interactive)
 dask_connection_find()
+dask_coiled_clusters()    # Coiled account clusters (optional)
 dask_disconnect(sc)
 dask_disconnect_all()
 ```
@@ -177,6 +195,26 @@ docker compose down
 Or `examples/run_cluster_demo.ps1` (`docker` and `Rscript` on `PATH`).
 Default scheduler: set `DASK_SCHEDULER` to the scheduler `tcp://` address
 (Docker Compose uses host port `8786`).
+
+## Examples
+
+Run from the **package root**. `examples/` is not in the CRAN tarball.
+
+| Script | Backend | Notes |
+| --- | --- | --- |
+| `examples/local_demo.R` | `master = "local"` | dplyr, `ddf_*`, parquet/csv (`tempfile` is fine) |
+| `examples/cluster_demo.R` | `DASK_SCHEDULER` / Docker | no laptop tempfile writes |
+| `examples/coiled_demo.R` | `master = "coiled"` | lists clusters; attaches `DASKLYR_COILED_NAME` if **ready**; `DASKLYR_COILED=create` is required to start a new id |
+
+```
+Rscript examples/local_demo.R
+Rscript examples/cluster_demo.R
+Rscript examples/coiled_demo.R
+```
+
+PowerShell wrappers: `examples/run_local_demo.ps1`, `run_cluster_demo.ps1`,
+`run_coiled_demo.ps1` (`Rscript` on `PATH`; Coiled wrapper requires
+`DASKLYR_COILED_NAME`).
 
 ## Not in scope
 

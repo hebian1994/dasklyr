@@ -3,7 +3,12 @@
 #   pip install "dask[dataframe,distributed]" pyarrow pandas
 #   Rscript examples/local_demo.R
 #
-# Optional env: DASKLYR_PYTHON or RETICULATE_PYTHON = path to that Python.
+# Optional env: DASKLYR_PYTHON or RETICULATE_PYTHON.
+
+if (!file.exists("examples/common.R")) {
+  stop("Run from the package root: Rscript examples/local_demo.R", call. = FALSE)
+}
+source("examples/common.R")
 
 library(dasklyr)
 library(dplyr)
@@ -11,55 +16,25 @@ library(dplyr)
 sc <- dask_connect(master = "local")
 on.exit(dask_disconnect(sc), add = TRUE)
 print(sc)
+invisible(dask_web(sc, browse = FALSE))
 
-students <- data.frame(
-  name = c("Ann", "Bob", "Cara", "Dan"),
-  class = c("a", "a", "b", "b"),
-  math = c(92L, 78L, 88L, 95L),
-  english = c(85L, 90L, 76L, 88L)
-)
-classes <- data.frame(
-  class = c("a", "b"),
-  teacher = c("Chen", "Liu")
-)
+tables <- dasklyr_example_copy(sc)
+st <- tables$st
+cl <- tables$cl
+dasklyr_example_dplyr(st, cl)
 
-st <- copy_to(sc, students, overwrite = TRUE, repartition = 2L)
-cl <- copy_to(sc, classes, overwrite = TRUE, repartition = 1L)
+cat("\n--- ddf_* / invoke ---\n")
+print(ddf_dim(st))
+cat("repartition(3): ", ddf_npartitions(dask_invoke(st, "repartition", npartitions = 3L)), "\n", sep = "")
 
-cat("\n--- filter math >= 90 ---\n")
-print(st %>% filter(math >= 90) %>% collect())
-
-cat("\n--- mutate constant + filter %in% ---\n")
-print(
-  st %>%
-    mutate(bonus = 5, total = math + english + bonus) %>%
-    filter(name %in% c("Ann", "Dan")) %>%
-    arrange(desc(total)) %>%
-    collect()
-)
-
-cat("\n--- count / summarise without group_by ---\n")
-print(st %>% count(class) %>% collect())
-print(st %>% summarise(n = n(), avg_math = mean(math), .groups = "drop") %>% collect())
-
-cat("\n--- group_by ---\n")
-print(
-  st %>%
-    group_by(class) %>%
-    summarise(n = n(), avg_math = mean(math), .groups = "drop") %>%
-    collect()
-)
-
-cat("\n--- left_join ---\n")
-print(
-  st %>%
-    left_join(cl, by = "class") %>%
-    select(name, class, teacher, math) %>%
-    collect()
-)
-
-pq <- tempfile("students_parquet")
+tmp <- tempfile("dasklyr_demo")
+dir.create(tmp)
+pq <- file.path(tmp, "students.parquet")
+csv_dir <- file.path(tmp, "students_csv")
 dask_write_parquet(st, pq, overwrite = TRUE)
-cat("\n--- parquet roundtrip ---\n")
+dask_write_csv(st, csv_dir, index = FALSE)
+cat("\n--- parquet / csv roundtrip ---\n")
 print(dask_read_parquet(sc, "students_pq", pq) %>% collect())
-cat("demo ok\n")
+print(dask_read_csv(sc, "students_csv", file.path(csv_dir, "*")) %>% collect())
+cat("registered: ", paste(src_tbls(sc), collapse = ", "), "\n", sep = "")
+cat("local demo ok\n")

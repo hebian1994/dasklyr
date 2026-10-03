@@ -5,9 +5,11 @@
 #'
 #' Point reticulate at a Python that has Dask with **environment variables**,
 #' not hardcoded paths: `DASKLYR_PYTHON` or `RETICULATE_PYTHON`. Cluster
-#' address: `DASK_SCHEDULER` (scheduler `tcp://` host and port).
+#' address: `DASK_SCHEDULER` (scheduler `tcp://` host and port). Optional
+#' Coiled: `master = "coiled"` after `coiled login` / `DASK_COILED__TOKEN`.
 #'
-#' @seealso [dask_connect()], [copy_to()], [dask_read_parquet()], [ddf_schema()]
+#' @seealso [dask_connect()], [copy_to()], [dask_read_parquet()], [ddf_schema()],
+#'   [dask_coiled_clusters()]
 #' @keywords internal
 #' @importFrom dplyr arrange collect copy_to count distinct filter group_by
 #'   inner_join left_join mutate n rename select semi_join slice_head src_tbls
