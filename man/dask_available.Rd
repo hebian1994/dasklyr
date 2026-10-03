@@ -14,5 +14,7 @@ Checks that reticulate can start Python and import \code{dask.dataframe}.
 Honors \code{DASKLYR_PYTHON} if set.
 }
 \examples{
-is.logical(dask_available())
+\dontrun{
+dask_available()
+}
 }

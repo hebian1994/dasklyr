@@ -42,7 +42,7 @@ hardcoded paths:
 | --- | --- |
 | `DASKLYR_PYTHON` | Python executable with dask (read by this package) |
 | `RETICULATE_PYTHON` | Same, via reticulate |
-| `DASK_SCHEDULER` | Cluster address, e.g. `tcp://127.0.0.1:8786` |
+| `DASK_SCHEDULER` | Cluster address, for example `tcp://` host port `8786` |
 
 ## Connecting to Dask
 
@@ -53,7 +53,7 @@ arguments is always local; pass `master` for a cluster (or
 ```r
 library(dasklyr)
 sc <- dask_connect(master = "local")
-# sc <- dask_connect(master = "tcp://127.0.0.1:8786")
+# sc <- dask_connect(master = Sys.getenv("DASK_SCHEDULER"))
 ```
 
 The returned connection (`sc`) is a dplyr source. The same `master` +
@@ -159,8 +159,9 @@ dask_disconnect_all()
 
 ## Docker cluster
 
-Image tag is pinned to **dask 2026.8.0**. Scheduler `8786`, dashboard
-[http://127.0.0.1:8787](http://127.0.0.1:8787).
+Image tag is pinned to **dask 2026.8.0**. Scheduler port `8786`, dashboard
+port `8787` on the scheduler host (Docker publishes these on the local
+machine).
 
 The official image is a conda stack (often Python 3.10 / pandas 2.x). Your
 client Python should use the same **dask** release; other libraries may
@@ -174,7 +175,8 @@ docker compose down
 ```
 
 Or `examples/run_cluster_demo.ps1` (`docker` and `Rscript` on `PATH`).
-Default scheduler: `DASK_SCHEDULER=tcp://127.0.0.1:8786`.
+Default scheduler: set `DASK_SCHEDULER` to the scheduler `tcp://` address
+(Docker Compose uses host port `8786`).
 
 ## Not in scope
 

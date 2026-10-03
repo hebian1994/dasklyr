@@ -77,7 +77,7 @@ is_local_master <- function(master) {
 #' The same `master` + `app_name` pair reuses an open connection.
 #'
 #' @param master `"local"` starts a local client. A scheduler address such as
-#'   `"tcp://127.0.0.1:8786"` connects to a cluster.
+#'   `"tcp://hostname:8786"` connects to a cluster.
 #' @param app_name Application name used when reusing connections.
 #' @param config A list from [dask_config()].
 #' @param timeout Seconds to wait when connecting to a remote scheduler.
@@ -90,7 +90,7 @@ is_local_master <- function(master) {
 #' @examples
 #' \dontrun{
 #' sc <- dask_connect(master = "local")
-#' sc <- dask_connect(master = "tcp://127.0.0.1:8786")
+#' sc <- dask_connect(master = Sys.getenv("DASK_SCHEDULER"))
 #' }
 dask_connect <- function(
   master = "local",

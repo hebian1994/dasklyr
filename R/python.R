@@ -40,7 +40,9 @@ dask_require <- function() {
 #' @return `TRUE` or `FALSE`.
 #' @export
 #' @examples
-#' is.logical(dask_available())
+#' \dontrun{
+#' dask_available()
+#' }
 dask_available <- function() {
   isTRUE(tryCatch(
     {

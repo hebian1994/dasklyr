@@ -13,6 +13,7 @@ test_that("connection helpers work without Dask", {
 })
 
 test_that("dask_available returns a single logical", {
+  skip_on_cran()
   got <- dask_available()
   expect_type(got, "logical")
   expect_length(got, 1L)

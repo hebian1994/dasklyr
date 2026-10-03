@@ -16,7 +16,7 @@ dask_connect(
 }
 \arguments{
 \item{master}{\code{"local"} starts a local client. A scheduler address such as
-\code{"tcp://127.0.0.1:8786"} connects to a cluster.}
+\code{"tcp://hostname:8786"} connects to a cluster.}
 
 \item{app_name}{Application name used when reusing connections.}
 
@@ -46,6 +46,6 @@ The same \code{master} + \code{app_name} pair reuses an open connection.
 \examples{
 \dontrun{
 sc <- dask_connect(master = "local")
-sc <- dask_connect(master = "tcp://127.0.0.1:8786")
+sc <- dask_connect(master = Sys.getenv("DASK_SCHEDULER"))
 }
 }

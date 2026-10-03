@@ -1,14 +1,14 @@
 Package: dasklyr
-Title: R Interface to Dask
-Version: 0.1.0
+Title: R Interface to 'Dask'
+Version: 0.1.1
 Authors@R: person("Louis", "Li", email = "908163862@qq.com",
                   role = c("aut", "cre", "cph"))
-Description: Run 'dplyr' verbs on Dask DataFrames from R. Connect to a
-    local Dask client or a remote scheduler, copy R data frames onto the
-    cluster, read and write Parquet and CSV, and collect results as
-    tibbles. Computation stays in Python workers through 'reticulate';
-    R only builds the graph. A Python installation with the 'dask'
-    package is required (see SystemRequirements).
+Description: Run 'dplyr' verbs on 'Dask' data frames from R. Connect to a
+    local 'Dask' client or a remote scheduler, copy R data frames onto
+    the cluster, read and write Parquet and CSV, and collect results as
+    'tibble' objects. Computation stays in Python workers through
+    'reticulate'; R only builds the graph. A Python installation with
+    the 'dask' package is required.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US

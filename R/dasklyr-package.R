@@ -5,7 +5,7 @@
 #'
 #' Point reticulate at a Python that has Dask with **environment variables**,
 #' not hardcoded paths: `DASKLYR_PYTHON` or `RETICULATE_PYTHON`. Cluster
-#' address: `DASK_SCHEDULER` (for example `tcp://127.0.0.1:8786`).
+#' address: `DASK_SCHEDULER` (scheduler `tcp://` host and port).
 #'
 #' @seealso [dask_connect()], [copy_to()], [dask_read_parquet()], [ddf_schema()]
 #' @keywords internal
