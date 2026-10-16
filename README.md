@@ -1,9 +1,14 @@
 # dasklyr
 
+[![CRAN status](https://www.r-pkg.org/badges/version/dasklyr)](https://cran.r-project.org/package=dasklyr)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/dasklyr)](https://cran.r-project.org/package=dasklyr)
+
 R front-end for [Dask](https://www.dask.org/), aimed at the same user-facing
 shape as [sparklyr](https://spark.posit.co/) (`connect` / `copy_to` / dplyr /
 read-write / collect). R talks to the Python Dask client through
 [reticulate](https://rstudio.github.io/reticulate/). Workers stay Python.
+
+On CRAN: `install.packages("dasklyr")`.
 
 ## Table of Contents
 
@@ -22,8 +27,7 @@ read-write / collect). R talks to the Python Dask client through
 install.packages("dasklyr")
 ```
 
-Until the package is on CRAN, install from this repository (`Rscript` on
-`PATH`):
+Development version from this repository (`Rscript` on `PATH`):
 
 ```r
 install.packages(".", repos = NULL, type = "source")
@@ -67,6 +71,7 @@ For [Coiled](https://docs.coiled.io/) (`pip install coiled` and
 sc <- dask_connect(
   master = "coiled",
   cluster_name = "demo-keep",
+  n_workers = 1L,
   shutdown_on_close = FALSE
 )
 dask_coiled_clusters()
