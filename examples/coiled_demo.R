@@ -11,7 +11,7 @@
 #   DASKLYR_PYTHON / RETICULATE_PYTHON
 #   DASKLYR_COILED_NAME     Coiled cluster name (required to connect)
 #   DASKLYR_COILED=create   opt-in: may start a new id (costs money)
-#   DASKLYR_COILED_WORKERS  used only when creating (default 1)
+#   DASKLYR_COILED_WORKERS  used only when creating (default 1; do not raise for tests)
 
 if (!file.exists("examples/common.R")) {
   stop("Run from the package root: Rscript examples/coiled_demo.R", call. = FALSE)

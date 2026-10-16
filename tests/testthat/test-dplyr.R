@@ -88,3 +88,57 @@ test_that("dplyr verbs: mutate constants, filter in/na, summarise, joins", {
   g <- tbl %>% group_by(class) %>% ungroup()
   expect_equal(g$groups, character())
 })
+
+test_that("summarise n() with other aggs after a join (two group keys)", {
+  skip_if_no_dask()
+  library(dplyr)
+  sc <- dask_connect(master = "local")
+  on.exit(dask_disconnect(sc), add = TRUE)
+
+  set.seed(1)
+  orders <- data.frame(
+    customer_id = sample.int(8L, 80L, replace = TRUE),
+    product_id = sample.int(6L, 80L, replace = TRUE),
+    qty = sample.int(5L, 80L, replace = TRUE),
+    amount = runif(80L, 5, 40)
+  )
+  products <- data.frame(
+    product_id = 1:6,
+    category = rep(c("A", "B", "C"), each = 2L),
+    price = c(10, 12, 20, 22, 30, 32),
+    stringsAsFactors = FALSE
+  )
+  customers <- data.frame(
+    customer_id = 1:8,
+    region = rep(c("R1", "R2"), each = 4L),
+    stringsAsFactors = FALSE
+  )
+  od <- copy_to(sc, orders, overwrite = TRUE, repartition = 4L)
+  pd <- copy_to(sc, products, overwrite = TRUE, repartition = 2L)
+  cd <- copy_to(sc, customers, overwrite = TRUE, repartition = 2L)
+
+  out <- od %>%
+    inner_join(pd, by = "product_id") %>%
+    mutate(revenue = qty * price) %>%
+    left_join(cd, by = "customer_id") %>%
+    group_by(region, category) %>%
+    summarise(
+      n = n(),
+      revenue = sum(revenue),
+      avg_qty = mean(qty),
+      max_qty = max(qty),
+      n_cust = n_distinct(customer_id),
+      .groups = "drop"
+    ) %>%
+    collect() %>%
+    arrange(region, category)
+
+  expect_true(nrow(out) >= 1L)
+  expect_equal(
+    sort(names(out)),
+    sort(c("region", "category", "n", "revenue", "avg_qty", "max_qty", "n_cust"))
+  )
+  expect_true(all(out$n >= 1L))
+  expect_true(all(out$max_qty >= out$avg_qty))
+})
+

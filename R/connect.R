@@ -106,7 +106,8 @@ is_local_master <- function(master) {
 #' @param cluster_name Coiled cluster name (`coiled.Cluster(name=)`).
 #'   Required when `master = "coiled"`.
 #' @param n_workers Worker count passed to Coiled only when creating a
-#'   cluster (not when attaching to a ready one).
+#'   cluster (not when attaching to a ready one). Default `1` so tests
+#'   and demos stay on 1 scheduler + 1 worker.
 #' @param shutdown_on_close If `TRUE`, [dask_disconnect()] shuts down the
 #'   Coiled cluster. Default `FALSE` leaves the VMs so the same
 #'   `cluster_name` can be reused.
@@ -120,6 +121,7 @@ is_local_master <- function(master) {
 #' sc <- dask_connect(
 #'   master = "coiled",
 #'   cluster_name = "demo-keep",
+#'   n_workers = 1L,
 #'   shutdown_on_close = FALSE
 #' )
 #' }
@@ -131,7 +133,7 @@ dask_connect <- function(
   processes = NULL,
   scheduler = NULL,
   cluster_name = NULL,
-  n_workers = NULL,
+  n_workers = 1L,
   shutdown_on_close = FALSE,
   ...
 ) {
@@ -143,7 +145,7 @@ dask_connect <- function(
   }
   timeout <- timeout %||% dask_config_value(config, "timeout", 10L)
   processes <- processes %||% dask_config_value(config, "processes", FALSE)
-  n_workers <- n_workers %||% dask_config_value(config, "n_workers", NULL)
+  n_workers <- n_workers %||% dask_config_value(config, "n_workers", 1L)
   if (is.null(shutdown_on_close)) {
     shutdown_on_close <- dask_config_value(config, "shutdown_on_close", FALSE)
   }

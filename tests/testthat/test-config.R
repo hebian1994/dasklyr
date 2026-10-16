@@ -3,6 +3,7 @@ test_that("dask_config returns overrides", {
   expect_type(cfg, "list")
   expect_equal(cfg$timeout, 5L)
   expect_true(cfg$processes)
+  expect_equal(dask_config()$n_workers, 1L)
 })
 
 test_that("connection helpers work without Dask", {

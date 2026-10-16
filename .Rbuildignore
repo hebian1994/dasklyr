@@ -5,6 +5,8 @@
 ^\.gitignore$
 ^PLAN\.md$
 ^PLAN
+^RELEASE\.md$
+^RELEASE
 ^docker-compose\.yml$
 ^examples$
 ^cran-comments\.md$

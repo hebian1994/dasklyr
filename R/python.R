@@ -59,6 +59,72 @@ dd <- function() {
   reticulate::import("dask.dataframe")
 }
 
+# One groupby.agg() for n()/mean/sum/... so we do not merge a size()
+# frame onto an agg frame. That merge KeyErrors after hash-join shuffle
+# (pandas 3 string index labels vs the post-shuffle columns).
+DASKLYR_SUMMARISE_PY <- paste(
+  "def _dasklyr_summarise(ddf, groups, spec, nunique):",
+  "    import dask.dataframe as dd",
+  "    groups = [str(g) for g in list(groups)]",
+  "    kw = {}",
+  "    if spec is not None:",
+  "        for k, v in dict(spec).items():",
+  "            kw[str(k)] = (str(v[0]), str(v[1]))",
+  "    nu = {}",
+  "    if nunique is not None:",
+  "        for k, v in dict(nunique).items():",
+  "            nu[str(k)] = str(v)",
+  "    if kw and nu:",
+  "        ddf = ddf.persist()",
+  "    out = None",
+  "    if kw:",
+  "        out = ddf.groupby(groups).agg(**kw).reset_index()",
+  "    if not nu:",
+  "        return out",
+  "    extra_pd = None",
+  "    extras = []",
+  "    for name, col in nu.items():",
+  "        piece = (",
+  "            ddf.groupby(groups)[col].nunique()",
+  "            .to_frame(name)",
+  "            .reset_index()",
+  "        )",
+  "        extras.append(piece)",
+  "    if out is None:",
+  "        acc = extras[0]",
+  "        for piece in extras[1:]:",
+  "            acc = dd.merge(acc, piece, on=groups, how='left')",
+  "        return acc",
+  "    extra_pd = extras[0].compute()",
+  "    for piece in extras[1:]:",
+  "        extra_pd = extra_pd.merge(piece.compute(), on=groups, how='left')",
+  "    def _m(pdf, extra=extra_pd, on=groups):",
+  "        return pdf.merge(extra, on=on, how='left')",
+  "    return out.map_partitions(_m, meta=_m(out._meta))",
+  sep = "\n"
+)
+
+dask_ensure_summarise_py <- function() {
+  dask_require()
+  main <- reticulate::import_main(convert = FALSE)
+  if (isTRUE(reticulate::py_has_attr(main, "_dasklyr_summarise"))) {
+    return(invisible(NULL))
+  }
+  reticulate::py_run_string(DASKLYR_SUMMARISE_PY)
+  invisible(NULL)
+}
+
+dask_summarise_agg <- function(ddf, groups, spec, nunique) {
+  dask_ensure_summarise_py()
+  main <- reticulate::import_main(convert = FALSE)
+  main$`_dasklyr_summarise`(
+    ddf,
+    as.list(unname(as.character(groups))),
+    if (length(spec)) spec else NULL,
+    if (length(nunique)) nunique else NULL
+  )
+}
+
 dask_distributed <- function() {
   dask_require()
   reticulate::import("dask.distributed")

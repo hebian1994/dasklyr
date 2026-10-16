@@ -5,6 +5,7 @@
 #   DASKLYR_COILED=list     → list_clusters only
 #   DASKLYR_COILED=true|attach + DASKLYR_COILED_NAME ready → attach
 #   DASKLYR_COILED=create + DASKLYR_COILED_NAME → may start a new id
+# Create path always uses n_workers=1 (1 scheduler + 1 worker).
 
 skip_if_no_dask <- function() {
   skip_on_cran()

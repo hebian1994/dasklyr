@@ -20,6 +20,7 @@ dask_coiled_clusters()
 sc <- dask_connect(
   master = "coiled",
   cluster_name = Sys.getenv("DASKLYR_COILED_NAME"),
+  n_workers = 1L,
   shutdown_on_close = FALSE
 )
 dask_disconnect(sc)

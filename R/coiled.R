@@ -120,6 +120,7 @@ dask_coiled_row_state <- function(row) {
 #' sc <- dask_connect(
 #'   master = "coiled",
 #'   cluster_name = Sys.getenv("DASKLYR_COILED_NAME"),
+#'   n_workers = 1L,
 #'   shutdown_on_close = FALSE
 #' )
 #' dask_disconnect(sc)
@@ -217,8 +218,8 @@ dask_coiled_open <- function(cluster_name, n_workers = NULL, shutdown_on_close =
     name = cluster_name,
     shutdown_on_close = isTRUE(shutdown_on_close)
   )
-  if (isTRUE(plan$pass_n_workers) && !is.null(n_workers)) {
-    kwargs$n_workers <- as.integer(n_workers)
+  if (isTRUE(plan$pass_n_workers)) {
+    kwargs$n_workers <- as.integer(n_workers %||% 1L)
   }
 
   cluster <- tryCatch(

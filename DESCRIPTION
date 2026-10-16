@@ -5,10 +5,10 @@ Authors@R: person("Louis", "Li", email = "908163862@qq.com",
                   role = c("aut", "cre", "cph"))
 Description: Run 'dplyr' verbs on 'Dask' data frames from R. Connect to a
     local 'Dask' client, a remote scheduler, or an optional 'Coiled'
-    cluster, copy R data frames onto the cluster, read and write Parquet
+    cluster, copy R data frames onto the cluster, read and write 'Parquet'
     and CSV, and collect results as 'tibble' objects. Computation stays
-    in Python workers through 'reticulate'; R only builds the graph. A
-    Python installation with the 'dask' package is required.
+    in 'Python' workers through 'reticulate'; R only builds the graph. A
+    'Python' installation with the 'dask' package is required.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Language: en-US
@@ -23,8 +23,8 @@ Imports:
 Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-SystemRequirements: Python with the dask (dataframe, distributed),
-    pandas, and pyarrow packages
+SystemRequirements: 'Python' with the 'dask' (dataframe, distributed),
+    'pandas', and 'pyarrow' packages
 URL: https://github.com/hebian1994/dasklyr
 BugReports: https://github.com/hebian1994/dasklyr/issues
 Config/roxygen2/version: 8.1.0

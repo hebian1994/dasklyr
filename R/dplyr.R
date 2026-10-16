@@ -284,60 +284,27 @@ summarise.tbl_dask <- function(.data, ..., .groups = "drop") {
     groups <- "_dasklyr_g"
   }
 
-  g <- ddf$groupby(as.list(groups))
-  size_name <- NULL
+  spec <- list()
   nunique_map <- list()
-  agg <- list()
+  need_ones <- FALSE
   for (nm in names(parsed)) {
     p <- parsed[[nm]]
     if (identical(p$fun, "size")) {
-      size_name <- nm
+      need_ones <- TRUE
+      spec[[nm]] <- c("_dasklyr_n", "sum")
     } else if (identical(p$fun, "nunique")) {
       nunique_map[[nm]] <- p$col
     } else {
-      agg[[p$col]] <- p$fun
+      spec[[nm]] <- c(p$col, p$fun)
     }
   }
-
-  merge_nunique <- function(out) {
-    for (nm in names(nunique_map)) {
-      col <- nunique_map[[nm]]
-      s <- g[[col]]$nunique()$to_frame(nm)$reset_index()
-      out <- out$merge(s, on = as.list(groups), how = "left")
-    }
-    out
-  }
-
-  if (length(agg)) {
-    out <- g$agg(agg)
-    rename_map <- list()
-    for (nm in names(parsed)) {
-      p <- parsed[[nm]]
-      if (!identical(p$fun, "size") && !identical(p$fun, "nunique")) {
-        rename_map[[p$col]] <- nm
-      }
-    }
-    if (length(rename_map)) {
-      out <- out$rename(columns = rename_map)
-    }
-    out <- out$reset_index()
-    if (!is.null(size_name)) {
-      nseries <- g$size()$rename(size_name)$reset_index()
-      out <- out$merge(nseries, on = as.list(groups), how = "left")
-    }
-    out <- merge_nunique(out)
-  } else if (!is.null(size_name)) {
-    out <- g$size()$rename(size_name)$reset_index()
-    out <- merge_nunique(out)
-  } else if (length(nunique_map)) {
-    nm <- names(nunique_map)[[1L]]
-    col <- nunique_map[[nm]]
-    nunique_map[[nm]] <- NULL
-    out <- g[[col]]$nunique()$to_frame(nm)$reset_index()
-    out <- merge_nunique(out)
-  } else {
+  if (!length(spec) && !length(nunique_map)) {
     stop("summarise() produced no aggregates", call. = FALSE)
   }
+  if (need_ones) {
+    ddf <- dask_assign_col(ddf, "_dasklyr_n", 1L)
+  }
+  out <- dask_summarise_agg(ddf, groups, spec, nunique_map)
   tbl <- new_tbl_dask(out, groups = character())
   if (dummy) {
     cols <- setdiff(dask_cols(tbl), "_dasklyr_g")

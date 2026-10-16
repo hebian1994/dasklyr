@@ -11,3 +11,11 @@ __pycache__/
 .DS_Store
 PLAN*
 CRAN-SUBMISSION
+RELEASE.md
+.Renviron
+.Rprofile
+revdep/
+.httr-oauth
+.coiled/
+docs/
+.cursor/

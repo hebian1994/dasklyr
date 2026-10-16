@@ -12,7 +12,7 @@ dask_connect(
   processes = NULL,
   scheduler = NULL,
   cluster_name = NULL,
-  n_workers = NULL,
+  n_workers = 1L,
   shutdown_on_close = FALSE,
   ...
 )
@@ -38,7 +38,8 @@ Default \code{FALSE} avoids Windows process-spawn issues.}
 Required when \code{master = "coiled"}.}
 
 \item{n_workers}{Worker count passed to Coiled only when creating a
-cluster (not when attaching to a ready one).}
+cluster (not when attaching to a ready one). Default \code{1} so tests
+and demos stay on 1 scheduler + 1 worker.}
 
 \item{shutdown_on_close}{If \code{TRUE}, \code{\link[=dask_disconnect]{dask_disconnect()}} shuts down the
 Coiled cluster. Default \code{FALSE} leaves the VMs so the same
@@ -68,6 +69,7 @@ sc <- dask_connect(master = Sys.getenv("DASK_SCHEDULER"))
 sc <- dask_connect(
   master = "coiled",
   cluster_name = "demo-keep",
+  n_workers = 1L,
   shutdown_on_close = FALSE
 )
 }

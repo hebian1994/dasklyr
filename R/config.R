@@ -6,7 +6,8 @@
 #' @param ... Named options. Known keys:
 #'   * `timeout`: seconds to wait when connecting to a remote scheduler.
 #'   * `processes`: local `Client` processes flag (default `FALSE`).
-#'   * `n_workers`: Coiled worker count when creating a cluster.
+#'   * `n_workers`: Coiled worker count when creating a cluster
+#'     (default `1`).
 #'   * `shutdown_on_close`: Coiled cluster teardown on [dask_disconnect()].
 #' @return A named list.
 #' @export
@@ -15,7 +16,8 @@
 dask_config <- function(...) {
   cfg <- list(
     timeout = 10L,
-    processes = FALSE
+    processes = FALSE,
+    n_workers = 1L
   )
   dots <- list(...)
   if (length(dots)) {
